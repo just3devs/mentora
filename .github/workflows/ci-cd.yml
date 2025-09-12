@@ -1,0 +1,142 @@
+name: Mentora CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  APP: "mentora"
+  VERSION: "0.0.1"
+  NAMESPACE_DEV: "mentora-dev"
+  DOCKER_SERVER: ghcr.io
+
+jobs:
+  # Frontend Build
+  dev-frontend-build:
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 1
+
+  # Backend Build
+  dev-backend-build:
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build backend
+        run: mvn clean package -DskipTests
+
+      - name: Upload backend JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/*.jar
+          retention-days: 1
+
+  # Docker Build and Push
+  dev-build-docker-image:
+    runs-on: ubuntu-latest
+    needs: [dev-frontend-build, dev-backend-build]
+    if: github.ref == 'refs/heads/dev'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download frontend artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+
+      - name: Download backend JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_SERVER }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
+          docker build -t ${IMAGE_TAG} .
+          docker push ${IMAGE_TAG}
+          echo "image ${IMAGE_TAG} pushed"
+
+  # Kubernetes Deployment
+  dev-apply-deployment:
+    runs-on: ubuntu-latest
+    needs: dev-build-docker-image
+    if: github.ref == 'refs/heads/dev'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        run: |
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          chmod +x ./kubectl && sudo mv ./kubectl /usr/local/bin/kubectl
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo -n "${{ secrets.K8S_DEV_CONFIG }}" | base64 -d > $HOME/.kube/config
+
+      - name: Deploy to Kubernetes
+        run: |
+          IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
+          sed -i -e 's|#APP#|'"${{ env.APP }}"'|g' kubernetes/deployment.yaml
+          sed -i -e 's|#NAMESPACE#|'"${{ env.NAMESPACE_DEV }}"'|g' kubernetes/deployment.yaml
+          sed -i -e 's|#IMAGE#|'"${IMAGE_TAG}"'|g' kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/deployment.yaml
+          echo "Application deployed with image: ${IMAGE_TAG}"
