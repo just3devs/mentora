@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: postgresuser
       POSTGRES_PASSWORD: postgressecret
-      POSTGRES_DB: bubblelove
+      POSTGRES_DB: mentora
     ports:
       - "5433:5432"
     volumes:
