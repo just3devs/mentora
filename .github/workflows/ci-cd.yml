@@ -123,20 +123,22 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup kubectl
-        run: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-          chmod +x ./kubectl && sudo mv ./kubectl /usr/local/bin/kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
 
       - name: Configure kubectl
         run: |
           mkdir -p $HOME/.kube
           echo -n "${{ secrets.K8S_DEV_CONFIG }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
 
       - name: Deploy to Kubernetes
         run: |
           IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
-          sed -i -e 's|#APP#|'"${{ env.APP }}"'|g' kubernetes/deployment.yaml
-          sed -i -e 's|#NAMESPACE#|'"${{ env.NAMESPACE_DEV }}"'|g' kubernetes/deployment.yaml
-          sed -i -e 's|#IMAGE#|'"${IMAGE_TAG}"'|g' kubernetes/deployment.yaml
-          kubectl apply -f kubernetes/deployment.yaml
+          export APP="${{ env.APP }}"
+          export NAMESPACE="${{ env.NAMESPACE_DEV }}"
+          export IMAGE="${IMAGE_TAG}"
+          envsubst < kubernetes/deployment.yaml > kubernetes/deployment.generated.yaml
+          kubectl apply -f kubernetes/deployment.generated.yaml
           echo "Application deployed with image: ${IMAGE_TAG}"
