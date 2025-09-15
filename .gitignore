@@ -1,2 +1,56 @@
-
 frontend/package-lock.json
+
+HELP.md
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+!backend/.mvn/wrapper/maven-wrapper.jar
+
+# Application & Logs
+application-local.properties
+*.log
+
+# Node & Frontend
+node/
+node_modules/
+coverage/
+package-lock.json
+
+# Environment Files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+.env.development
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# STS (Spring Tool Suite)
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
