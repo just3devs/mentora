@@ -2,6 +2,7 @@ package com.mentora.backend.error;
 
 import lombok.Builder;
 import lombok.Data;
+
 import java.util.List;
 
 @Data
@@ -17,6 +18,6 @@ public class FileValidationErrorResponse {
         private String fileName;
         private String error;
         private String message;
-        private Long maxSize; // Assuming maxSize is a Long
+        private String maxSize;
     }
 }

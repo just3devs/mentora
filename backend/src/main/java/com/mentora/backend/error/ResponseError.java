@@ -2,6 +2,7 @@ package com.mentora.backend.error;
 
 import lombok.Builder;
 import lombok.Data;
+
 import java.util.List;
 
 @Data
