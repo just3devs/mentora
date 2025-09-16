@@ -1,3 +1,5 @@
 package com.mentora.backend.agent;
 
-public record ChatRequest(String prompt) {}
+import jakarta.validation.constraints.NotNull;
+
+public record ChatRequest(@NotNull String prompt) {}

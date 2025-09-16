@@ -1,5 +1,6 @@
 package com.mentora.backend.agent;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +17,8 @@ public class AgentController {
     }
 
     @PostMapping
-    public ChatResponse ask(@RequestBody ChatRequest req) {
+    public ChatResponse ask(@RequestBody @Valid ChatRequest req) {
         return agentService.getResponse(req);
     }
-
-
+    
 }
