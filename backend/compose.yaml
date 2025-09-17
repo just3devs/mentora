@@ -11,5 +11,32 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: mentora-zipkin
+    ports:
+      - "9411:9411"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9411/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mentora-backend:dev
+    container_name: mentora-backend
+    depends_on:
+      postgres:
+        condition: service_started
+      zipkin:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8080:8080"
+
 volumes:
   pgdata: {}

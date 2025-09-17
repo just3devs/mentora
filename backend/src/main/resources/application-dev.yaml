@@ -4,7 +4,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/mentora
+    url: jdbc:postgresql://postgres:5433/mentora
     username: postgresuser
     password: postgressecret
     hikari:
@@ -39,3 +39,18 @@ spring:
         options:
           model: gpt-4o-mini
           temperature: 0.2
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0   # get all traces
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+
+logging:
+  level:
+    io.zipkin.reporter2: DEBUG
+    brave: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate: ERROR
