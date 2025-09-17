@@ -10,6 +10,11 @@ services:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgresuser -d mentora -h 127.0.0.1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -26,17 +31,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+
     image: mentora-backend:dev
     container_name: mentora-backend
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
       zipkin:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: dev
     ports:
       - "8080:8080"
+    
 
 volumes:
   pgdata: {}
