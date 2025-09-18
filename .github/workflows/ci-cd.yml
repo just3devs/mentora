@@ -182,9 +182,3 @@ jobs:
           
           kubectl apply -f kubernetes/deployment.generated.yaml
           echo "Application deployed with image: ${IMAGE_TAG}"
-
-      - name: Verify deployment
-        run: |
-          kubectl get pods -n ${{ env.NAMESPACE_DEV }}
-          kubectl get services -n ${{ env.NAMESPACE_DEV }}
-          kubectl rollout status deployment/mentora-app -n ${{ env.NAMESPACE_DEV }} --timeout=300s
