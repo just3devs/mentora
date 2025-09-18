@@ -126,8 +126,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install KinD
-        uses: engineerd/setup-kind@v0.5.0
+      - name: Install latest kind
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
 
       - name: Create KinD cluster
         run: |
