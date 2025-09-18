@@ -136,7 +136,6 @@ jobs:
           mkdir -p $HOME/.kube
           echo -n "${{ secrets.K8S_DEV_CONFIG }}" | base64 -d > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
-          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
       - name: Deploy to Kubernetes
         env:
@@ -149,5 +148,5 @@ jobs:
           IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
           export IMAGE="${IMAGE_TAG}"
           envsubst < kubernetes/deployment.yaml > kubernetes/deployment.generated.yaml
-          kubectl apply -f kubernetes/deployment.generated.yaml --validate=false
+          kubectl apply -f kubernetes/deployment.generated.yaml --validate=false --kubeconfig=$HOME/.kube/config
           echo "Application deployed with image: ${IMAGE_TAG}"
