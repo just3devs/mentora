@@ -137,15 +137,15 @@ jobs:
           echo -n "${{ secrets.K8S_DEV_CONFIG }}" | base64 -d > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
-            - name: Deploy to Kubernetes
+      - name: Deploy to Kubernetes
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          APP: ${{ env.APP }}
+          NAMESPACE: ${{ env.NAMESPACE_DEV }}
         run: |
           IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
-          export APP="${{ env.APP }}"
-          export NAMESPACE="${{ env.NAMESPACE_DEV }}"
           export IMAGE="${IMAGE_TAG}"
           envsubst < kubernetes/deployment.yaml > kubernetes/deployment.generated.yaml
           kubectl apply -f kubernetes/deployment.generated.yaml
