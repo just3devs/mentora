@@ -2,7 +2,7 @@ name: Mentora CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, dev, fix ]
   pull_request:
     branches: [ main ]
 
@@ -136,6 +136,13 @@ jobs:
           mkdir -p $HOME/.kube
           echo -n "${{ secrets.K8S_DEV_CONFIG }}" | base64 -d > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
+
+      - name: Debug kubectl config
+        run: |
+          echo "--- Kubeconfig file content ---"
+          cat $HOME/.kube/config
+          echo "--- kubectl config view ---"
+          kubectl config view --kubeconfig=$HOME/.kube/config
 
       - name: Deploy to Kubernetes
         env:
