@@ -75,6 +75,7 @@ jobs:
   # Docker Build and Push
   dev-build-docker-image:
     runs-on: ubuntu-latest
+    needs: [dev-frontend-build, dev-backend-build]
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/fix'
     permissions:
       contents: read
@@ -135,6 +136,10 @@ jobs:
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
+
+      - name: Set kubeconfig context to KinD
+        run: |
+          kubectl config use-context kind-mentora-dev
 
       - name: Debug kubectl config
         run: |
