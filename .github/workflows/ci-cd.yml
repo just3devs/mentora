@@ -2,7 +2,7 @@ name: Mentora CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, dev, 'fix/**' ]
+    branches: [ main, dev, fix ]
   pull_request:
     branches: [ main ]
 
@@ -75,7 +75,7 @@ jobs:
   # Docker Build and Push
   dev-build-docker-image:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/heads/fix/')
+    if: github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/heads/fix')
     permissions:
       contents: read
       packages: write
@@ -120,7 +120,7 @@ jobs:
   dev-apply-deployment:
     runs-on: ubuntu-latest
     needs: dev-build-docker-image
-    if: github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/heads/fix/')
+    if: github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/heads/fix')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
