@@ -126,30 +126,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install KinD
+        uses: engineerd/setup-kind@v0.5.0
+
       - name: Create KinD cluster
-        uses: helm/kind-action@v1
-        with:
-          install_only: false
-          cluster_name: mentora-dev
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: List kubectl contexts
-        run: kubectl config get-contexts
+        run: |
+          kind create cluster --name mentora-dev
 
       - name: Set kubeconfig context to KinD
         run: |
-          # Check if context exists before setting it
-          if kubectl config get-contexts | grep -q "kind-mentora-dev"; then
           kubectl config use-context kind-mentora-dev
-          else
-            echo "ERROR: KinD context 'kind-mentora-dev' not found. Available contexts:"
-            kubectl config get-contexts
-            exit 1
-          fi
 
       - name: Debug kubectl config
         run: |
