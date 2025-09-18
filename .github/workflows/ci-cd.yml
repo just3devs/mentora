@@ -148,5 +148,5 @@ jobs:
           IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
           export IMAGE="${IMAGE_TAG}"
           envsubst < kubernetes/deployment.yaml > kubernetes/deployment.generated.yaml
-          kubectl apply -f kubernetes/deployment.generated.yaml
+          kubectl apply -f kubernetes/deployment.generated.yaml --validate=false
           echo "Application deployed with image: ${IMAGE_TAG}"
