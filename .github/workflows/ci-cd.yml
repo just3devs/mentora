@@ -107,6 +107,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
           docker build -t ${IMAGE_TAG} .
@@ -134,10 +138,14 @@ jobs:
           chmod 600 $HOME/.kube/config
 
       - name: Deploy to Kubernetes
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          APP: ${{ env.APP }}
+          NAMESPACE: ${{ env.NAMESPACE_DEV }}
         run: |
           IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
-          export APP="${{ env.APP }}"
-          export NAMESPACE="${{ env.NAMESPACE_DEV }}"
           export IMAGE="${IMAGE_TAG}"
           envsubst < kubernetes/deployment.yaml > kubernetes/deployment.generated.yaml
           kubectl apply -f kubernetes/deployment.generated.yaml

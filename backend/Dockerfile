@@ -18,9 +18,12 @@ WORKDIR /app
 # Copy jar
 COPY --from=build /app/target/*.jar app.jar
 
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
 # Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --retries=5 CMD \
-  wget -qO- http://localhost:8080/actuator/health | grep -q '"status":"UP"' || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=5 \
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 EXPOSE 8080
 
