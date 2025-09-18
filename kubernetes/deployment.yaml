@@ -35,8 +35,17 @@ spec:
             - containerPort: 8080
           env:
             - name: POSTGRES_USER
-              value: "${POSTGRES_USER}"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: "${POSTGRES_PASSWORD}"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: POSTGRES_PASSWORD
             - name: OPENAI_API_KEY
-              value: "${OPENAI_API_KEY}"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: OPENAI_API_KEY
