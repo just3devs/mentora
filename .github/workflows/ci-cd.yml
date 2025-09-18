@@ -117,7 +117,7 @@ jobs:
           docker push ${IMAGE_TAG}
           echo "image ${IMAGE_TAG} pushed"
 
-  # Kubernetes Deployment
+    # Kubernetes Deployment
   dev-apply-deployment:
     runs-on: ubuntu-latest
     needs: dev-build-docker-image
@@ -137,9 +137,19 @@ jobs:
         with:
           version: 'latest'
 
+      - name: List kubectl contexts
+        run: kubectl config get-contexts
+
       - name: Set kubeconfig context to KinD
         run: |
+          # Check if context exists before setting it
+          if kubectl config get-contexts | grep -q "kind-mentora-dev"; then
           kubectl config use-context kind-mentora-dev
+          else
+            echo "ERROR: KinD context 'kind-mentora-dev' not found. Available contexts:"
+            kubectl config get-contexts
+            exit 1
+          fi
 
       - name: Debug kubectl config
         run: |
