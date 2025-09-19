@@ -12,7 +12,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER}" ]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       retries: 5
 
@@ -25,7 +25,6 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:9411/health || exit 1"]
       interval: 10s
-      timeout: 5s
       retries: 5
 
   backend:
@@ -48,9 +47,8 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1" ]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
       interval: 30s
-      timeout: 5s
       retries: 5
 
 volumes:
