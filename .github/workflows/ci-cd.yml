@@ -2,7 +2,7 @@ name: Mentora CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, dev, 'fix' ]
   pull_request:
     branches: [ main ]
 
@@ -76,7 +76,7 @@ jobs:
   dev-build-docker-image:
     runs-on: ubuntu-latest
     needs: [dev-frontend-build, dev-backend-build]
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/fix'
     permissions:
       contents: read
       packages: write
@@ -107,6 +107,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
           docker build -t ${IMAGE_TAG} .
@@ -117,28 +121,64 @@ jobs:
   dev-apply-deployment:
     runs-on: ubuntu-latest
     needs: dev-build-docker-image
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/fix'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Configure kubectl
+      - name: Install latest kind
         run: |
-          mkdir -p $HOME/.kube
-          echo -n "${{ secrets.K8S_DEV_CONFIG }}" | base64 -d > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Create KinD cluster
+        run: |
+          kind create cluster --name mentora-dev
+
+      - name: Set kubeconfig context to KinD
+        run: |
+          kubectl config use-context kind-mentora-dev
+
+      - name: Debug kubectl config
+        run: |
+          echo "--- Kubeconfig file content ---"
+          cat $HOME/.kube/config || echo "Using KinD default kubeconfig"
+          echo "--- kubectl config view ---"
+          kubectl config view
+
+      - name: Create namespace
+        run: |
+          kubectl create namespace ${{ env.NAMESPACE_DEV }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create secrets
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          kubectl create secret generic app-secrets \
+            --from-literal=POSTGRES_USER="${POSTGRES_USER}" \
+            --from-literal=POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+            --from-literal=OPENAI_API_KEY="${OPENAI_API_KEY}" \
+            --namespace=${{ env.NAMESPACE_DEV }} \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy to Kubernetes
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           IMAGE_TAG="${{ env.DOCKER_SERVER }}/${{ github.repository }}-dev:${{ env.VERSION }}-${{ github.run_id }}"
-          export APP="${{ env.APP }}"
-          export NAMESPACE="${{ env.NAMESPACE_DEV }}"
+          
           export IMAGE="${IMAGE_TAG}"
+          export NAMESPACE="${{ env.NAMESPACE_DEV }}"
+          
           envsubst < kubernetes/deployment.yaml > kubernetes/deployment.generated.yaml
+          
+          echo "Generated deployment file:"
+          cat kubernetes/deployment.generated.yaml
+          
           kubectl apply -f kubernetes/deployment.generated.yaml
           echo "Application deployed with image: ${IMAGE_TAG}"

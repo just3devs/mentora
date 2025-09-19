@@ -2,23 +2,24 @@ services:
   postgres:
     image: postgres:15
     container_name: mentora-postgres
+    restart: always
     environment:
-      POSTGRES_USER: postgresuser
-      POSTGRES_PASSWORD: postgressecret
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: mentora
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgresuser -d mentora -h 127.0.0.1"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER}" ]
+      interval: 10s
+      retries: 5
 
   zipkin:
     image: openzipkin/zipkin:latest
     container_name: mentora-zipkin
+    restart: always
     ports:
       - "9411:9411"
     healthcheck:
@@ -31,8 +32,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-
-    image: mentora-backend:dev
+    image: mentora
     container_name: mentora-backend
     depends_on:
       postgres:
@@ -41,9 +41,17 @@ services:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mentora
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     ports:
       - "8080:8080"
-    
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata: {}
