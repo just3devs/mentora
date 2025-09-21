@@ -2,11 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement, incrementByAmount } from "./counterSlice";
 
-interface RootState {
-  counter: {
-    value: number;
-  };
-}
+import type { RootState } from "../../app/store";
 
 function Counter() {
   const count = useSelector((state: RootState) => state.counter.value);
