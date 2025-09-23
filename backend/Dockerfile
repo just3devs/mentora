@@ -6,11 +6,11 @@ WORKDIR /app
 
 COPY pom.xml .
 RUN --mount=type=cache,target=/root/.m2 \
-    mvn -q -B -DskipTests dependency:go-offline
+    mvn -q -B -T 1C -DskipTests dependency:go-offline
 
 COPY src ./src
 RUN --mount=type=cache,target=/root/.m2 \
-    mvn -q -B -DskipTests package
+    mvn -q -B -T 1C -DskipTests package
 
 # ---- Runtime stage ----
 FROM eclipse-temurin:21-jre-alpine
