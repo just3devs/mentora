@@ -53,5 +53,14 @@ services:
       timeout: 5s
       retries: 5
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: mentora-frontend
+    container_name: mentora-frontend
+    ports:
+      - "80:80"
+
 volumes:
   pgdata: {}
