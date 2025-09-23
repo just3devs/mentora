@@ -10,7 +10,7 @@ COPY pom.xml .
 RUN --mount=type=cache,target=/root/.m2 \
     mvn -q -B -DskipTests dependency:go-offline
 
-# Sonra kaynaklar (bu değişince sadece bu katman invalid olur)
+# Then sources (when this changes, only this layer becomes invalid)
 COPY src ./src
 RUN --mount=type=cache,target=/root/.m2 \
     mvn -q -B -DskipTests package
