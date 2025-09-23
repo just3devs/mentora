@@ -55,7 +55,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ../frontend
       dockerfile: Dockerfile
     image: mentora-frontend
     container_name: mentora-frontend
