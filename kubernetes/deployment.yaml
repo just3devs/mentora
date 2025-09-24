@@ -28,8 +28,8 @@ spec:
         app: mentora-app
     spec:
       containers:
-        - image: ${IMAGE}
-          name: mentora-app
+        - image: ${BACKEND_IMAGE}
+          name: mentora-backend
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -49,3 +49,8 @@ spec:
                 secretKeyRef:
                   name: app-secrets
                   key: OPENAI_API_KEY
+        - image: ${FRONTEND_IMAGE}
+          name: mentora-frontend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
