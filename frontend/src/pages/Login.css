@@ -1,0 +1,126 @@
+.login-container {
+    display: flex;
+    height: 100vh;
+    background: url("../images/background.jpg") no-repeat center center/cover;
+    padding: 5rem;
+}
+.area{
+    width: 100%;
+    height: 100%;
+    border: 4px solid #fff;
+    border-radius: 4rem;
+    display: flex;
+    overflow: hidden;
+}
+.login-left {
+    width: 46%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.7);
+}
+
+.login-box {
+    text-align: center;
+}
+
+.login-title {
+    font-size: 7rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-family: "Dancing Script", cursive;
+    background: linear-gradient(to right, #1d9bf0, #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+
+.login-subtitle {
+    color: #2e56a5;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.google-btn {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    background: #fff;
+    color: #3c4043;
+    transition: all 0.2s ease;
+
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.google-btn i {
+    font-size: 20px;
+}
+
+.google-btn:hover {
+    background: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.google-btn:active {
+    background: #f1f3f4;
+    transform: scale(0.98);
+}
+
+.login-right {
+    flex: 1;
+    background-image: element("../images/background.jpg");
+}
+
+.login-menu {
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.login-menu ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+.login-menu a {
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.05);
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+}
+
+.login-menu a:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #09daf1;
+}
+
+
+@media (max-width: 768px) {
+    .login-right {
+        display: none;
+    }
+    .login-left {
+        flex: 1;
+    }
+}
