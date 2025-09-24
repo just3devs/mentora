@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import AboutPage from './pages/AboutPage';
 import NotFoundPage from './pages/NotFoundPage';
-import LoginPage from "./pages/Login.tsx";
+import LoginPage from "./pages/Login";
 
 const AppRoutes: React.FC = () => (
   <Router>

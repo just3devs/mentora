@@ -79,7 +79,6 @@
 
 .login-right {
     flex: 1;
-    background-image: element("../images/background.jpg");
 }
 
 .login-menu {
