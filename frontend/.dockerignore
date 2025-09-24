@@ -1,0 +1,19 @@
+# Node modules & lock files
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+dist
+build
+
+# Editor / OS files
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.iml
+
+# Git
+.git
+.gitignore

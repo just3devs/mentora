@@ -4,6 +4,7 @@ target/
 .mvnw
 .mvnw.cmd
 .idea/
+.vscode/
 *.iml
 *.ipr
 *.iws
@@ -19,3 +20,8 @@ Thumbs.db
 *.log
 logs/
 tmp/
+*.tmp
+
+# Git
+.git
+.gitignore

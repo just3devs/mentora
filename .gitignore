@@ -1,5 +1,3 @@
-frontend/package-lock.json
-
 HELP.md
 target/
 !**/src/main/**/target/
