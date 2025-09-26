@@ -1,0 +1,81 @@
+.input-area-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #e5e5e5;
+    background-color: transparent;
+    padding: 12px 16px;
+    font-family: system-ui, -apple-system, sans-serif;
+    z-index: 1000;
+}
+
+.input-area-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.input-area-box {
+    display: flex;
+    align-items: flex-end;
+    background-color: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-area-box.focused {
+    border-color: #8b5cf6;
+}
+
+.input-area-textarea {
+    flex: 1;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    min-height: 20px;
+    max-height: 80px;
+    overflow-y: auto;
+    line-height: 20px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1f2937;
+    margin: 0;
+    padding: 0;
+}
+
+.input-area-textarea::placeholder {
+    color: #9ca3af;
+}
+
+.input-area-button {
+    margin-left: 8px;
+    padding: 6px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.input-area-button.active {
+    background-color: #7c3aed;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.input-area-button.active:hover {
+    background-color: #6d28d9;
+}
+
+.input-area-button.inactive {
+    background-color: #d1d5db;
+    color: #6b7280;
+    cursor: not-allowed;
+}
