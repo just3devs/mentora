@@ -8,7 +8,7 @@ const LoginLeft: React.FC = () => {
                 <h1 className="login-title">Welcome</h1>
                 <p className="login-subtitle">AI Mentor ile öğrenme yolculuğuna başla 🚀</p>
 
-                <button className="google-btn">
+                <button className="google-btn" onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/google'}>
                     <FcGoogle size={24}/> Google ile giriş yap
                 </button>
             </div>
