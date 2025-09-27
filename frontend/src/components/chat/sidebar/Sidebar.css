@@ -1,0 +1,360 @@
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sidebar-overlay {
+        display: block;
+    }
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: #f8fafc;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: left 0.3s ease;
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    padding: 16px;
+}
+
+.new-chat-button {
+    flex: 1;
+    padding: 12px 16px;
+    background-color: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.new-chat-button:hover {
+    background-color: #5148e5;
+}
+
+.search-button-wrapper {
+    flex-shrink: 0;
+}
+
+.search-toggle-button {
+    padding: 12px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.search-toggle-button:hover {
+    background-color: #333333;
+}
+
+.search-container {
+    padding: 0 16px 16px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: #6b7280;
+    z-index: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid #d1d5db;
+    border-radius: 20px;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+}
+
+.search-input:focus {
+    border-color: #6366f1;
+}
+
+.conversations-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 16px 8px;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.clear-all-button {
+    background: none;
+    border: none;
+    color: #6366f1;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.clear-all-button:hover {
+    color: #5148e5;
+}
+
+.chat-list-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chat-list {
+    flex: 1;
+    padding: 0 8px;
+    overflow-y: auto;
+}
+
+.older-chats-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.chat-section-title {
+    padding: 16px 8px 8px;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    margin: 2px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.chat-item:hover {
+    background-color: #f1f5f9;
+}
+
+.chat-item.active {
+    background-color: #e0e7ff;
+}
+
+.chat-icon {
+    color: #6b7280;
+    flex-shrink: 0;
+}
+
+.chat-title {
+    flex: 1;
+    font-size: 14px;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.chat-item:hover .chat-actions {
+    opacity: 1;
+}
+
+.edit-chat-button {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.edit-chat-button:hover {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.edit-title-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.edit-title-input {
+    flex: 1;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 12px;
+    outline: none;
+}
+
+.edit-title-input:focus {
+    border-color: #6366f1;
+}
+
+.save-title-button {
+    background: none;
+    border: none;
+    color: #10b981;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+}
+
+.save-title-button:hover {
+    background-color: #d1fae5;
+}
+
+.cancel-title-button {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+}
+
+.cancel-title-button:hover {
+    background-color: #fee2e2;
+}
+
+.delete-chat-button {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.delete-chat-button:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.no-chats {
+    text-align: center;
+    padding: 40px 16px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.sidebar-footer {
+    border-top: 1px solid #e5e7eb;
+    padding: 16px;
+}
+
+.settings-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 8px;
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    transition: background-color 0.2s ease;
+}
+
+.settings-button:hover {
+    background-color: #f1f5f9;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #6366f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.user-name {
+    font-size: 14px;
+    color: #1f2937;
+    font-weight: 500;
+}

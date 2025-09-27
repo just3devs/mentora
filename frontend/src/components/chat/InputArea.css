@@ -3,11 +3,21 @@
     bottom: 0;
     left: 0;
     right: 0;
-    border-top: 1px solid #e5e5e5;
     background-color: transparent;
     padding: 12px 16px;
     font-family: system-ui, -apple-system, sans-serif;
     z-index: 1000;
+    transition: left 0.3s ease;
+}
+
+.main-content.sidebar-open ~ .input-area-container,
+.main-content.sidebar-open .input-area-container {
+    left: 300px;
+}
+
+.main-content.sidebar-closed ~ .input-area-container,
+.main-content.sidebar-closed .input-area-container {
+    left: 0;
 }
 
 .input-area-wrapper {
