@@ -7,6 +7,7 @@ import com.mentora.backend.chat.dto.ChatResponseDto;
 import com.mentora.backend.chat.dto.UserMessageDto;
 import com.mentora.backend.chat.service.ChatListService;
 import com.mentora.backend.chat.service.ChatService;
+import com.mentora.backend.security.CustomOAuth2UserService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,30 +24,30 @@ import java.util.UUID;
 public class ChatController {
 
     private final ChatService chatService;
-   // private final AuthService authService;
+    private final CustomOAuth2UserService authService;
     private final ChatListService chatListService;
 
-//    public ChatController(ChatService chatService, AuthService authService, ChatListService chatListService, AgentGateway agentGateway) {
-//
-//        this.chatService = chatService;
-//        this.authService = authService;
-//        this.chatListService = chatListService;
-//    }
+    public ChatController(ChatService chatService, CustomOAuth2UserService authService, ChatListService chatListService) {
 
-//    @GetMapping("/chats_history")
-//    public ResponseEntity<Map<String, List<ChatListDto>>> getChatsHistory() {
-//        String currentUserId = authService.currentUserId();
-//        Map<String, List<ChatListDto>> chatListMap = chatListService.getChatList(currentUserId);
-//        return ResponseEntity.ok(chatListMap);
-//
-//    }
+        this.chatService = chatService;
+        this.chatListService = chatListService;
+        this.authService = authService;
+    }
 
-//    @GetMapping("/search")
-//    public ResponseEntity<List<ChatListDto>> searchChats(@RequestParam(required = false) String title) {
-//        String currentUserId = authService.currentUserId();
-//        List<ChatListDto> searchResults = chatService.searchChatsByTitle(currentUserId, title);
-//        return ResponseEntity.ok(searchResults);
-//    }
+    @GetMapping("/chats_history")
+    public ResponseEntity<Map<String, List<ChatListDto>>> getChatsHistory() {
+        String currentUserId = authService.currentUserId();
+        Map<String, List<ChatListDto>> chatListMap = chatListService.getChatList(currentUserId);
+        return ResponseEntity.ok(chatListMap);
+
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ChatListDto>> searchChats(@RequestParam(required = false) String title) {
+        String currentUserId = authService.currentUserId();
+        List<ChatListDto> searchResults = chatService.searchChatsByTitle(currentUserId, title);
+        return ResponseEntity.ok(searchResults);
+    }
 
     @DeleteMapping("/delete/{chatId}")
     public ResponseEntity<Void> deleteChatId(@PathVariable UUID chatId) {
@@ -65,19 +66,19 @@ public class ChatController {
     }
 
 
-//    @GetMapping("/history/{chatId}")
-//    public ResponseEntity<ChatResponseDto> getChatHistory(@PathVariable UUID chatId) {
-//        String currentUserId = authService.currentUserId();
-//        ChatResponseDto chatHistory = chatService.getChatHistoryById(currentUserId, chatId);
-//        return ResponseEntity.ok(chatHistory);
-//    }
+    @GetMapping("/history/{chatId}")
+    public ResponseEntity<ChatResponseDto> getChatHistory(@PathVariable UUID chatId) {
+        String currentUserId = authService.currentUserId();
+        ChatResponseDto chatHistory = chatService.getChatHistoryById(currentUserId, chatId);
+        return ResponseEntity.ok(chatHistory);
+    }
 
-//    @DeleteMapping("/deleteAllChats/")
-//    public ResponseEntity<String> deleteAllChats() {
-//        String currentUserId = authService.currentUserId();
-//        chatService.deleteAllChatsByUserId(currentUserId);
-//        return ResponseEntity.ok("All Chats Deleted Successfully");
-//    }
+    @DeleteMapping("/deleteAllChats/")
+    public ResponseEntity<String> deleteAllChats() {
+        String currentUserId = authService.currentUserId();
+        chatService.deleteAllChatsByUserId(currentUserId);
+        return ResponseEntity.ok("All Chats Deleted Successfully");
+    }
 
 
 

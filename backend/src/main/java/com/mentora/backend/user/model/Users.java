@@ -2,9 +2,7 @@ package com.mentora.backend.user.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,6 +15,8 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,8 +28,8 @@ public class Users {
     @NotNull
     private String email;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "current_streak", nullable = false, columnDefinition = "integer default 0")
     private Integer currentStreak = 0;
@@ -52,6 +52,8 @@ public class Users {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    private String picture;
 
     public void updateStreak() {
         LocalDate today = LocalDate.now();
