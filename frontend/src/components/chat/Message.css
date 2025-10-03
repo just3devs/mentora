@@ -1,0 +1,175 @@
+.message-container {
+    display: flex;
+    margin-bottom: 16px;
+    gap: 12px;
+}
+
+.message-container.user {
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.message-container.user .message-avatar {
+    background-color: #7c3aed;
+    color: white;
+}
+
+.message-container.bot .message-avatar {
+    background-color: #6b7280;
+    color: white;
+}
+
+.message-bubble {
+    max-width: 75%;
+    background-color: #f3f4f6;
+    border-radius: 16px;
+    padding: 12px 16px;
+    position: relative;
+}
+
+.message-container.user .message-bubble {
+    background-color: #7c3aed;
+    color: white;
+}
+
+.message-container.user .message-bubble::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: -8px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid #7c3aed;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.message-container.bot .message-bubble::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-right: 8px solid #f3f4f6;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.message-text {
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.code-block-container {
+    margin: 12px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+}
+
+.code-block-header {
+    background-color: #374151;
+    color: #d1d5db;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.code-language {
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.copy-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: transparent;
+    border: 1px solid #6b7280;
+    color: #d1d5db;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.2s ease;
+}
+
+.copy-button:hover {
+    background-color: #4b5563;
+}
+
+.code-block {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 16px;
+    margin: 0;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+.code-block code {
+    background: none;
+    padding: 0;
+    font-family: inherit;
+}
+
+/* Syntax highlighting colors */
+.code-block .keyword {
+    color: #c678dd;
+}
+
+.code-block .string {
+    color: #98c379;
+}
+
+.code-block .function {
+    color: #61dafb;
+}
+
+.code-block .comment {
+    color: #7c7c7c;
+    font-style: italic;
+}
+
+.code-block .number {
+    color: #d19a66;
+}
+
+.code-block .operator {
+    color: #56b6c2;
+}
+
+.code-block .property {
+    color: #e06c75;
+}
+
+/* User mesajlarındaki kod blokları için özel stiller */
+.message-container.user .code-block-header {
+    background-color: #6d28d9;
+    color: #e5e7eb;
+}
+
+.message-container.user .copy-button {
+    border-color: #8b5cf6;
+    color: #e5e7eb;
+}
+
+.message-container.user .copy-button:hover {
+    background-color: #5b21b6;
+}
