@@ -53,7 +53,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new UserNotAuthenticatedException();
         }
 
-        OidcUser oidcUser = (OidcUser) oauthToken.getPrincipal();
+        Object principal = oauthToken.getPrincipal();
+        if (!(principal instanceof OidcUser oidcUser)) {
+            throw new UserNotAuthenticatedException("Principal is not an OidcUser");
+        }
 
         return oidcUser.getAttribute("sub");
     }
@@ -69,7 +72,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new UserNotAuthenticatedException();
         }
 
-        OidcUser oidcUser = (OidcUser) oauthToken.getPrincipal();
+        Object principal = oauthToken.getPrincipal();
+        if (!(principal instanceof OidcUser oidcUser)) {
+            throw new UserNotAuthenticatedException("Principal is not an OidcUser");
+        }
 
         return oidcUser.getAttribute("name");
     }
@@ -85,8 +91,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new UserNotAuthenticatedException();
         }
 
-        OidcUser oidcUser = (OidcUser) oauthToken.getPrincipal();
+        Object principal = oauthToken.getPrincipal();
+        if (!(principal instanceof OidcUser oidcUser)) {
+            throw new UserNotAuthenticatedException("Principal is not an OidcUser");
+        }
 
+        // Try to get email from 'email' claim first, fallback to 'preferred_username'
+        String email = oidcUser.getAttribute("email");
+        if (email != null && !email.isEmpty()) {
+            return email;
+        }
+
+        // Fallback to preferred_username (may not always be an email)
         return oidcUser.getAttribute("preferred_username");
     }
 }

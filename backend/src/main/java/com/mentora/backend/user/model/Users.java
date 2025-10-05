@@ -37,7 +37,13 @@ public class Users {
     private LocalDate lastActivityDate;
 
     @Column(name = "streak_freeze_count", nullable = false, columnDefinition = "integer default 0")
-    private Integer streakFreezeCount = 5; //It's hardcoded right now. Can be fetched from config later on for flexibility.
+
+    /**
+     * The number of streak freezes available to the user.
+     * <p>
+     * This value is currently hardcoded to 5. It can be fetched from configuration later on for flexibility.
+     */
+    private Integer streakFreezeCount = 5;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -51,7 +57,6 @@ public class Users {
 
     private String picture;
 
-    // TODO: Transaction management - Bu metod bir service içinde @Transactional olarak çağrılmalı
     public void updateStreak() {
         LocalDate today = LocalDate.now();
 
@@ -77,7 +82,6 @@ public class Users {
         return streakFreezeCount > 0;
     }
 
-    // TODO: Transaction management - Bu metod bir service içinde @Transactional olarak çağrılmalı
     public void useStreakFreeze() {
         if (canUseStreakFreeze()) {
             streakFreezeCount--;
