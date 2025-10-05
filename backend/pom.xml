@@ -112,7 +112,11 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-
+        <dependency>
+            <groupId>com.twilio.sdk</groupId>
+            <artifactId>twilio</artifactId>
+            <version>10.6.3</version>
+        </dependency>
 	</dependencies>
 
 	<dependencyManagement>
