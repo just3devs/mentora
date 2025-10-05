@@ -8,21 +8,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class Users {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     @NotNull
-    private UUID id;
+    private String id;
 
     @Column(name = "email", unique = true)
     @NotNull
@@ -41,7 +37,7 @@ public class Users {
     private LocalDate lastActivityDate;
 
     @Column(name = "streak_freeze_count", nullable = false, columnDefinition = "integer default 0")
-    private Integer streakFreezeCount = 5;
+    private Integer streakFreezeCount = 5; //It's hardcoded right now. Can be fetched from config later on for flexibility.
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -55,6 +51,7 @@ public class Users {
 
     private String picture;
 
+    // TODO: Transaction management - Bu metod bir service içinde @Transactional olarak çağrılmalı
     public void updateStreak() {
         LocalDate today = LocalDate.now();
 
@@ -80,6 +77,7 @@ public class Users {
         return streakFreezeCount > 0;
     }
 
+    // TODO: Transaction management - Bu metod bir service içinde @Transactional olarak çağrılmalı
     public void useStreakFreeze() {
         if (canUseStreakFreeze()) {
             streakFreezeCount--;

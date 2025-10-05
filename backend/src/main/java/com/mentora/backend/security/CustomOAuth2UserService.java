@@ -3,7 +3,6 @@ package com.mentora.backend.security;
 import com.mentora.backend.error.UserNotAuthenticatedException;
 import com.mentora.backend.user.UserRepository;
 import com.mentora.backend.user.model.Users;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -13,9 +12,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.UUID;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -35,10 +31,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = oauth2User.getAttribute("email");
         String picture = oauth2User.getAttribute("picture");
 
-        Users user = new Users();
-        user.setId(UUID.fromString(id));
-        user.setName(name);
+        Users user = userRepository.findById(id).orElse(new Users());
+        user.setId(id);
         user.setEmail(email);
+        user.setName(name);
         user.setPicture(picture);
 
         userRepository.save(user);
@@ -49,20 +45,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public String currentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserNotAuthenticatedException();
+        }
+
         if (!(authentication instanceof OAuth2AuthenticationToken oauthToken)) {
             throw new UserNotAuthenticatedException();
         }
 
         OidcUser oidcUser = (OidcUser) oauthToken.getPrincipal();
 
-        return oidcUser.getAttribute("oid");
+        return oidcUser.getAttribute("sub");
     }
 
     public String currentUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserNotAuthenticatedException();
+        }
+
         if (!(authentication instanceof OAuth2AuthenticationToken oauthToken)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthenticated");
+            throw new UserNotAuthenticatedException();
         }
 
         OidcUser oidcUser = (OidcUser) oauthToken.getPrincipal();
@@ -73,8 +77,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public String currentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserNotAuthenticatedException();
+        }
+
         if (!(authentication instanceof OAuth2AuthenticationToken oauthToken)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthenticated");
+            throw new UserNotAuthenticatedException();
         }
 
         OidcUser oidcUser = (OidcUser) oauthToken.getPrincipal();
