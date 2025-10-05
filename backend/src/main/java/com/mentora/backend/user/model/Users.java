@@ -2,15 +2,12 @@ package com.mentora.backend.user.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -19,17 +16,16 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Users {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     @NotNull
-    private UUID id;
+    private String id;
 
     @Column(name = "email", unique = true)
     @NotNull
     private String email;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "current_streak", nullable = false, columnDefinition = "integer default 0")
     private Integer currentStreak = 0;
@@ -41,6 +37,12 @@ public class Users {
     private LocalDate lastActivityDate;
 
     @Column(name = "streak_freeze_count", nullable = false, columnDefinition = "integer default 0")
+
+    /**
+     * The number of streak freezes available to the user.
+     * <p>
+     * This value is currently hardcoded to 5. It can be fetched from configuration later on for flexibility.
+     */
     private Integer streakFreezeCount = 5;
 
     @CreationTimestamp
@@ -52,6 +54,8 @@ public class Users {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    private String picture;
 
     public void updateStreak() {
         LocalDate today = LocalDate.now();

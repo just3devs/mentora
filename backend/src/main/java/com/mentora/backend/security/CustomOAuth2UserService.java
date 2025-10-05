@@ -1,10 +1,15 @@
 package com.mentora.backend.security;
 
-import com.mentora.backend.user.User;
+import com.mentora.backend.error.UserNotAuthenticatedException;
 import com.mentora.backend.user.UserRepository;
+import com.mentora.backend.user.model.Users;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -26,14 +31,78 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = oauth2User.getAttribute("email");
         String picture = oauth2User.getAttribute("picture");
 
-        User user = new User();
+        Users user = userRepository.findById(id).orElse(new Users());
         user.setId(id);
-        user.setName(name);
         user.setEmail(email);
+        user.setName(name);
         user.setPicture(picture);
 
         userRepository.save(user);
 
         return oauth2User;
+    }
+
+    public String currentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserNotAuthenticatedException();
+        }
+
+        if (!(authentication instanceof OAuth2AuthenticationToken oauthToken)) {
+            throw new UserNotAuthenticatedException();
+        }
+
+        Object principal = oauthToken.getPrincipal();
+        if (!(principal instanceof OidcUser oidcUser)) {
+            throw new UserNotAuthenticatedException("Principal is not an OidcUser");
+        }
+
+        return oidcUser.getAttribute("sub");
+    }
+
+    public String currentUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserNotAuthenticatedException();
+        }
+
+        if (!(authentication instanceof OAuth2AuthenticationToken oauthToken)) {
+            throw new UserNotAuthenticatedException();
+        }
+
+        Object principal = oauthToken.getPrincipal();
+        if (!(principal instanceof OidcUser oidcUser)) {
+            throw new UserNotAuthenticatedException("Principal is not an OidcUser");
+        }
+
+        return oidcUser.getAttribute("name");
+    }
+
+    public String currentUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserNotAuthenticatedException();
+        }
+
+        if (!(authentication instanceof OAuth2AuthenticationToken oauthToken)) {
+            throw new UserNotAuthenticatedException();
+        }
+
+        Object principal = oauthToken.getPrincipal();
+        if (!(principal instanceof OidcUser oidcUser)) {
+            throw new UserNotAuthenticatedException("Principal is not an OidcUser");
+        }
+
+        // Try to get email from 'email' claim first, fallback to 'preferred_username'
+        String email = oidcUser.getAttribute("email");
+        if (email != null && !email.isEmpty()) {
+            return email;
+        }
+
+        // Fallback to preferred_username (may not always be an email)
+        return oidcUser.getAttribute("preferred_username");
     }
 }
